@@ -10,4 +10,10 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="ru.opinion.opinion.DisplayGitHubReposActivity">
 
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_github_repos"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
 </RelativeLayout>
