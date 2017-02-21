@@ -17,7 +17,7 @@ public class GitHubRepoAdapter extends ArrayAdapter<GitHubRepo> {
     private List<GitHubRepo> values;
 
     public GitHubRepoAdapter(Context context, List<GitHubRepo> values) {
-        super(context, android.R.layout.list_item_pagination, values);
+        super(context, R.layout.list_item_pagination, values);
 
         this.context = context;
         this.values = values;
@@ -30,10 +30,10 @@ public class GitHubRepoAdapter extends ArrayAdapter<GitHubRepo> {
         if (row == null) {
             LayoutInflater inflater =
                     (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            row = inflater.inflate(android.R.layout.list_item_pagination, parent, false);
+            row = inflater.inflate(R.layout.list_item_pagination, parent, false);
         }
 
-        TextView textView = (TextView) row.findViewById(android.R.id.list_item_pagination_text);
+        TextView textView = (TextView) row.findViewById(R.id.list_item_pagination_text);
 
         GitHubRepo item = values.get(position);
         String message = item.getName();
