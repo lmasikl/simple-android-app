@@ -2,55 +2,46 @@ package ru.opinion.opinion;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
-
-import com.google.gson.Gson;
 
 import java.util.List;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 import ru.opinion.opinion.api.model.GitHubRepo;
-import ru.opinion.opinion.api.service.GitHubClient;
 import ru.opinion.opinion.ui.adapter.GitHubRepoAdapter;
 
-public class DisplayGitHubReposActivity extends AppCompatActivity {
+public class DisplayGitHubReposActivity extends AppCompatActivity implements DisplayGithubMvpView {
 
-    private ListView listView;
+    private GitHubRepoAdapter adapter;
+    private DisplayGitHubReposPresenter presenter;
+
+    private RecyclerView gitHubReposRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_github_repos);
 
-        listView = (ListView) findViewById(R.id.pagination_list);
+        gitHubReposRecyclerView = (RecyclerView) findViewById(R.id.rv_github_repos);
 
-        Retrofit.Builder builder = new Retrofit.Builder()
-                .baseUrl("https://api.github.com")
-                .addConverterFactory(GsonConverterFactory.create());
+        presenter = new DisplayGitHubReposPresenter(this);
+        adapter = new GitHubRepoAdapter(this);
+        LinearLayoutManager llm = new LinearLayoutManager(this);
 
-        Retrofit retrofit = builder.build();
+        gitHubReposRecyclerView.setLayoutManager(llm);
+        gitHubReposRecyclerView.setAdapter(adapter);
 
-        GitHubClient client = retrofit.create(GitHubClient.class);
-        Call<List<GitHubRepo>> call = client.reposForUser("lmasikl");
+        presenter.getRepos();
+    }
 
-        call.enqueue(new Callback<List<GitHubRepo>>() {
-            @Override
-            public void onResponse(Call<List<GitHubRepo>> call, Response<List<GitHubRepo>> response) {
-                List<GitHubRepo> repos = response.body();
+    @Override
+    public void showRepos(List<GitHubRepo> repos) {
+        adapter.setRepos(repos);
+    }
 
-                listView.setAdapter(new GitHubRepoAdapter(DisplayGitHubReposActivity.this, repos));
-            }
-
-            @Override
-            public void onFailure(Call<List<GitHubRepo>> call, Throwable t) {
-                Toast.makeText(DisplayGitHubReposActivity.this, "error", Toast.LENGTH_SHORT).show();
-            }
-        });
+    @Override
+    public void showError(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 }
